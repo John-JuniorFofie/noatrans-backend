@@ -41,7 +41,7 @@ const router = Router();
  *                 fullName: "John Fofie"
  *                 userName: "john_fofie"
  *                 email: "john.fofie@example.com"
- *                 studentStatus: "Student"
+ *                 role: "Learner"
  *       401:
  *         description: Unauthorized access.
  *         content:

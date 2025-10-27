@@ -29,7 +29,7 @@ const router = express.Router();
  *             required:
  *               - fullName
  *               - userName
- *               - studentStatus
+ *               - role
  *               - email
  *               - password
  *             properties:
@@ -41,7 +41,7 @@ const router = express.Router();
  *                 example: "john_fofie"
  *               studentStatus:
  *                 type: string
- *                 enum: [Student, Graduate, Other]
+ *                 enum: [Leaner, Facilitator, Admin]
  *                 example: "Student"
  *               email:
  *                 type: string

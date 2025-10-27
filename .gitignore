@@ -4,6 +4,7 @@ node_modules/
 # TypeScript build output
 dist/
 
+
 # Environment variables
 .env
 .env.*
@@ -30,3 +31,6 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Ignore package-lock.json
+package-lock.json
