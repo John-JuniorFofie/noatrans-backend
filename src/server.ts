@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.ts";
 import morgan from "morgan"; 
-import indexRouter from "./routes/index.route.ts"
+import indexRouter from "./routes/index.route.ts";
 import swagger from "swagger-ui-express";
 import swaggerSpec from "./services/swagger.ts";
 // import { authenticate } from "./middlewares/auth.middleware.ts";
