@@ -4,7 +4,7 @@ const options = {
     swaggerDefinition: {
         openapi: "3.0.0",
         info: {
-            title: "Ride Hailing system API Documentation",
+            title: "noatrans website API Documentation",
             version: "1.0.0",
             description: "This is the backend API documentation for the ride hailing system, built with Node.js, Express, and MongoDB.",
         },

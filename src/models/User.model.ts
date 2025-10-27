@@ -39,7 +39,7 @@ const userSchema =new Schema<IUser>({
     },
     role:{
         type: String,
-        enum: ["rider", "driver"],
+        enum: ["Facilitator", "Learner", "Admin"],
         required: true,
     },
     phoneNumber:{

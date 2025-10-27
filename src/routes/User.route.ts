@@ -57,7 +57,7 @@ const router = Router();
  *               success: false
  *               message: "User not found."
  */
-router.get("/profile", authenticate, authorizedRoles("Driver", "Rider"), getUserProfile);
+router.get("/profile", authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), getUserProfile);
 
 /**
  * @swagger
@@ -112,7 +112,7 @@ router.get("/profile", authenticate, authorizedRoles("Driver", "Rider"), getUser
  *       500:
  *         description: Internal server error.
  */
-router.put("/change-password", authenticate, authorizedRoles("Driver", "Rider"), changePassword);
+router.put("/change-password", authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), changePassword);
 
 /**
  * @swagger
@@ -165,7 +165,7 @@ router.put("/change-password", authenticate, authorizedRoles("Driver", "Rider"),
  *       404:
  *         description: User not found.
  */
-router.put("/change-username", authenticate, authorizedRoles("Driver", "Rider"), changeUsername);
+router.put("/change-username", authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), changeUsername);
 /**
  * @swagger
  * /api/v1/users/change-email:
@@ -209,7 +209,7 @@ router.put("/change-username", authenticate, authorizedRoles("Driver", "Rider"),
  *       404:
  *         description: User not found.
  */
-router.put("/change-email", authenticate, authorizedRoles ("Driver, Rider"), changeEmail);
+router.put("/change-email", authenticate, authorizedRoles ("Facilitator", "Learner", "Admin"), changeEmail);
 
 
 /**
@@ -237,6 +237,6 @@ router.put("/change-email", authenticate, authorizedRoles ("Driver, Rider"), cha
  *       500:
  *         description: Internal server error.
  */
-router.delete("/delete", authenticate, authorizedRoles("Driver", "Rider"), deleteAccount);
+router.delete("/delete", authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), deleteAccount);
 
 export default router;
