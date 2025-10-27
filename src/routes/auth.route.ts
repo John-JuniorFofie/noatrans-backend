@@ -39,10 +39,10 @@ const router = express.Router();
  *               userName:
  *                 type: string
  *                 example: "john_fofie"
- *               studentStatus:
+ *               role:
  *                 type: string
  *                 enum: [Leaner, Facilitator, Admin]
- *                 example: "Student"
+ *                 example: "Learner"
  *               email:
  *                 type: string
  *                 format: email
