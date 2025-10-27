@@ -6,7 +6,7 @@ const options = {
         info: {
             title: "noatrans website API Documentation",
             version: "1.0.0",
-            description: "This is the backend API documentation for the ride hailing system, built with Node.js, Express, and MongoDB.",
+            description: "This is the backend API documentation for Ghanaian Language facilitation platform, built with Node.js, Express, and MongoDB.",
         },
         contact: {
             name: "John Fofie Junior",
