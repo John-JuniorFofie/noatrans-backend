@@ -1,8 +1,5 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import type{UserRole} from "../types/authRequest.ts";
-
-// export type Role = "Admin" | "Learner"| "Facilitator";
-
 
 export interface IUser extends Document {
     fullName: string;

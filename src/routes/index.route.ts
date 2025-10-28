@@ -1,7 +1,7 @@
 import express from "express";
 import authRouter from "./auth.route.ts";
-import userRouter from "./user.route.ts";
-import coursesRouter from "./courses.route.ts";
+import userRouter from "./User.route.ts";
+import coursesRouter from "./course.route.ts";
 
 
 const rootRouter = express.Router();
@@ -15,7 +15,7 @@ rootRouter.use('/auth',authRouter);
 rootRouter.use('/users',userRouter);    
 
 //course routes
- rootRouter.use('/courses',coursesRouter);
+ rootRouter.use('/course',coursesRouter);
 
 
 

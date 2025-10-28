@@ -7,6 +7,8 @@ import {
   deleteCourse,
 } from "../controllers/course.controller.ts";
 
+import { authenticate } from "../middlewares/auth.middleware.ts";
+import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
 const router = express.Router();
 
 /**
@@ -88,7 +90,7 @@ const router = express.Router();
  *               success: false
  *               message: "Failed to create course"
  */
-router.post("/", createCourse);
+router.post("/create", authenticate, authorizedRoles("Facilitator"), createCourse);
 
 /**
  * @swagger
@@ -119,7 +121,7 @@ router.post("/", createCourse);
  *               success: false
  *               message: "Failed to fetch courses"
  */
-router.get("/", getAllCourses);
+router.get("/getAllCourses",authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), getAllCourses);
 
 /**
  * @swagger
@@ -162,7 +164,7 @@ router.get("/", getAllCourses);
  *               success: false
  *               message: "Failed to fetch course"
  */
-router.get("/:id", getCourseById);
+router.get("/:id/getOnecourse",authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), getCourseById);
 
 /**
  * @swagger
@@ -215,7 +217,7 @@ router.get("/:id", getCourseById);
  *               success: false
  *               message: "Failed to update course"
  */
-router.put("/:id", updateCourse);
+router.put("/:id/update",authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), updateCourse);
 
 /**
  * @swagger
@@ -255,6 +257,6 @@ router.put("/:id", updateCourse);
  *               success: false
  *               message: "Failed to delete course"
  */
-router.delete("/:id", deleteCourse);
+router.delete("/:id/delete",authenticate, authorizedRoles("Facilitator", "Admin"),deleteCourse);
 
 export default router;
