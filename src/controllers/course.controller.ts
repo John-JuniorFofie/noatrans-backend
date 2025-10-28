@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import Course from "../models/course.model.ts";
 import type { AuthRequest } from "../types/authRequest.ts";
 import mongoose from "mongoose";
+import User from "../models/User.model.ts";
 
 /**
  * ✅ Create a new course
@@ -42,6 +43,40 @@ export const createCourse = async (req: AuthRequest, res: Response, next: NextFu
     res.status(500).json({ 
       success: false, 
       error: "Internal server error" });
+  }
+};
+// ✅ Apply for a Course
+export const applyForCourse = async (req: AuthRequest, res: Response) => {
+  try {
+    const courseId = req.params.id;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized user" });
+    }
+
+    const course = await Course.findOne({ _id: courseId, isDeleted: false });
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    // Check if user already applied
+    if (course.User.includes(userId)) {
+      return res.status(400).json({ success: false, message: "You already enrolled in this course" });
+    }
+
+    // Add learner to course
+    course.User.push(userId);
+    await course.save();
+
+    res.status(200).json({
+      success: true,
+      message: "You have successfully enrolled in this course",
+      data: course,
+    });
+  } catch (error) {
+    console.error({ message: "Error applying for course", error });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

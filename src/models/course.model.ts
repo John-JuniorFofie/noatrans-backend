@@ -1,4 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
+enrolledLearners: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+
 
 export interface ICourse extends Document {
   title: string;
