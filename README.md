@@ -18,18 +18,18 @@
 noatrans-backend/
 │
 ├── src/
-│   ├── config/          # Configuration files (DB, environment, etc.)
-│   ├── controllers/     # Request handlers for different routes
-│   ├── models/          # Mongoose models and schemas
-│   ├── routes/          # API route definitions
-│   ├── middlewares/     # Authentication and validation middleware
-│   ├── services/        # Business logic and external integrations
-│   ├── types/           # TypeScript interfaces and custom types
-│   └── server.ts        # Application entry point
+│   ├── config/          
+│   ├── controllers/     
+│   ├── models/          
+│   ├── routes/          
+│   ├── middlewares/     
+│   ├── services/        
+│   ├── types/           
+│   └── server.ts       
 │
-├── package.json         # Dependencies and project scripts
-├── tsconfig.json        # TypeScript configuration
-└── README.md            # Project documentation
+├── package.json         
+├── tsconfig.json        
+└── README.md          
 
 
 yaml
