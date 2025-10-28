@@ -2,10 +2,10 @@ import type { Request, Response, NextFunction } from "express";
 import Course from "../models/course.model.ts";
 import type { AuthRequest } from "../types/authRequest.ts";
 import mongoose from "mongoose";
-import User from "../models/User.model.ts";
+import users from "../models/user.model.ts";
 
 /**
- * ✅ Create a new course
+ *  Create a new course
  */
 export const createCourse = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -45,43 +45,46 @@ export const createCourse = async (req: AuthRequest, res: Response, next: NextFu
       error: "Internal server error" });
   }
 };
-// ✅ Apply for a Course
-export const applyForCourse = async (req: AuthRequest, res: Response) => {
+
+  //  apply for a course
+export const applyCourse= async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const courseId = req.params.id;
+    const { title, language } = req.body;
     const userId = req.user?.userId;
 
     if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized user" });
+      return res.status(401).json({ 
+        success: false, 
+        message: "Unauthorized user" });
     }
 
-    const course = await Course.findOne({ _id: courseId, isDeleted: false });
-    if (!course) {
-      return res.status(404).json({ success: false, message: "Course not found" });
+    if (!title || !language) {
+      return res.status(400).json({
+        success: false,
+        message: "Pickup and dropoff are required",
+      });
     }
 
-    // Check if user already applied
-    if (course.User.includes(userId)) {
-      return res.status(400).json({ success: false, message: "You already enrolled in this course" });
-    }
+    const ride = await Course.create({
+      title,
+      language,
+      rider: userId,
+    });
 
-    // Add learner to course
-    course.User.push(userId);
-    await course.save();
-
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: "You have successfully enrolled in this course",
-      data: course,
+      message: "Ride requested successfully.",
+      data: ride,
     });
   } catch (error) {
-    console.error({ message: "Error applying for course", error });
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error({ message: "Error requesting ride", error });
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
 
+
 /**
- * ✅ Get all active courses
+ *  Get all active courses
  */
 export const getAllCourses = async (req: Request, res: Response) => {
   try {
@@ -103,7 +106,7 @@ export const getAllCourses = async (req: Request, res: Response) => {
 };
 
 /**
- * ✅ Get a single course by ID
+ * Get a single course by ID
  */
 export const getCourseById = async (req: Request, res: Response) => {
   try {
@@ -131,7 +134,7 @@ export const getCourseById = async (req: Request, res: Response) => {
 };
 
 /**
- * ✅ Update a course
+ *  Update a course
  */
 export const updateCourse = async (req: AuthRequest, res: Response) => {
   try {
@@ -170,7 +173,7 @@ export const updateCourse = async (req: AuthRequest, res: Response) => {
 };
 
 /**
- * ✅  delete a course
+ *  delete a course
  */
 export const deleteCourse = async (req: AuthRequest, res: Response) => {
   try {

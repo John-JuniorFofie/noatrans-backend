@@ -1,10 +1,10 @@
-# 🗣️ NoaTrans Backend
+#  NoaTrans Backend
 
 **NoaTrans** is a backend API for a Ghanaian language learning platform that supports translation, courses, and user facilitation across local dialects like Akan, Ewe, Ga and the other Ghanaian lanuages.
 
 ---
 
-## ⚙️ Tech Stack
+##  Tech Stack
 - **Language:** TypeScript  
 - **Framework:** Express.js (Node.js)  
 - **Database:** MongoDB (Mongoose)  
@@ -14,7 +14,7 @@
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 noatrans-backend/
 │
 ├── src/
@@ -37,7 +37,7 @@ Copy code
 
 ---
 
-🧩 Setup & Run Locally
+ Setup & Run Locally
 bash
 Copy code
 # 1. Clone the repo
@@ -49,12 +49,12 @@ npm install
 
 # 3. Run in dev mode
 npm run dev
-📚 API Docs
+API Docs
 
 
 bash
 Copy code
 http://localhost:5000/api-docs
-👤 Author
+ Author
 John Fofie — Backend Developer
 johnfofie31@gmail.com

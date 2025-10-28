@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import type{UserRole} from "../types/authRequest.ts";
 
-// export type Role = "rider" | "driver";
+// export type Role = "Admin" | "Learner"| "Facilitator";
 
 
 export interface IUser extends Document {
@@ -10,13 +10,10 @@ export interface IUser extends Document {
     password: string;
     role: UserRole;
     phoneNumber?:String;
-    isAvailable?: boolean; // For drivers
+    isAvailable?: boolean; 
     isAccountDeleted?:boolean;
-       passwordChangedAt?:Date;
-    // currentLocatoin?:{
-    //     type: "Point";
-    //     coordinates: [number, number]; // [longitude, latitude]
-    // };
+    passwordChangedAt?:Date;
+ 
     }
 
 const userSchema =new Schema<IUser>({
@@ -59,14 +56,6 @@ const userSchema =new Schema<IUser>({
         type: 
         Date
      },
-    // currentLocation:{
-    //     type: {
-    //         type: String,
-    //         enum: ["Point"],
-    //         default: "Point",
-    // },
-    // coordinates:{
-    //     type:[Number], index:"2dsphere"}
-    // }
+ 
 },{timestamps:true});
 export default mongoose.model<IUser>("User", userSchema);

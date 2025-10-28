@@ -1,9 +1,13 @@
 import { Document } from "mongoose";
+import type{UserRole} from "./authRequest.ts";
 
 export interface IUser extends Document {
-  userName: string;
-  email: string;
-  password: string;
-  role: "Admin " | "Facilitator" | "Learner";
-  passwordChangedAt?: Date; 
+   fullName: string;
+     email: string;
+     password: string;
+     role: UserRole;
+     phoneNumber?:String;
+     isAvailable?: boolean; 
+     isAccountDeleted?:boolean;
+     passwordChangedAt?:Date;
 }
