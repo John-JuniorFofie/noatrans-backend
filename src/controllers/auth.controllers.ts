@@ -30,10 +30,10 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
          } = req.body;
 
         //Validation
-        if (!fullName || !email || !password) {
+        if (!fullName || !email || !password|| !role) {
             res.status(400).json({
                 success: false,
-                message: "Full Name, Email, Password are required"
+                message: "Full Name, Email, Password and role are required"
             });
             return
         }
