@@ -10,6 +10,8 @@ export interface ICourse extends Document {
   lessons?: string[]; 
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt?: Date;
 }
 
 const courseSchema = new Schema<ICourse>(

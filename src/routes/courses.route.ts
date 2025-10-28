@@ -100,7 +100,7 @@ router.post("/", createCourse);
  *     description: Retrieves a list of all available courses.
  *     responses:
  *       200:
- *         description: A list of all courses.
+ *          description: A list of all courses.
  *         content:
  *           application/json:
  *             example:

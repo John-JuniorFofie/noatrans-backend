@@ -16,4 +16,4 @@ export interface CustomJwtPayload extends JwtPayload {
     exp?: number;
 }
   
-export type UserRole = 'rider' | 'driver';
+export type UserRole = 'Admin' | 'Facilitator' | 'Learner';
