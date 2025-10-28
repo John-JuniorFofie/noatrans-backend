@@ -35,12 +35,6 @@ Copy code
 
 ---
 
-## 🔑 Environment Variables
-Create a `.env` file in the root with:
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/noatrans
-ACCESS_TOKEN_SECRET=anylongrandomsecret
 🧩 Setup & Run Locally
 bash
 Copy code
@@ -54,11 +48,11 @@ npm install
 # 3. Run in dev mode
 npm run dev
 📚 API Docs
-Once running:
+
 
 bash
 Copy code
 http://localhost:5000/api-docs
 👤 Author
 John Fofie — Backend Developer
-📧 noatransproject@gmail.com (optional)
+johnfofie31@gmail.com
