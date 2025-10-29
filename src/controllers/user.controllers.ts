@@ -6,11 +6,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-/**
+  /**
  * @route   GET /api/v1/users/profile
  * @desc    Get profile data of the logged-in user
- * @access  Private (Driver or Rider)
- */
+ * @access  Private (Facilitator, Learner, Admin)
+ * */
 export const getUserProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
@@ -22,7 +22,7 @@ export const getUserProfile = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    const user = await User.findById(userId).select("-password -__v");
+    const user = await User.findById(userId).select("password");
     if (!user) {
       res.status(404).json({
          success: false, 
@@ -47,7 +47,7 @@ export const getUserProfile = async (req: AuthRequest, res: Response): Promise<v
 /**
  * @route   PUT /api/v1/users/change-email
  * @desc    Change password of logged-in user
- * @access  Private (Driver or Rider)
+ * @access  Private (Facilitator, Learner, Admin)
  */
 
 export const changeEmail = async (req:AuthRequest, res:Response): Promise<void> =>{
@@ -100,7 +100,7 @@ export const changeEmail = async (req:AuthRequest, res:Response): Promise<void> 
 // 
 // * @route   PUT /api/v1/users/change username
 //  * @desc    Change password of logged-in user
-//  * @access  Private (Driver or Rider)
+//  * @access  Private (Facilitator, Learner, Admin)
 //  */ 
 
 export const changeUsername = async (req:AuthRequest, res:Response): Promise<void> =>{
@@ -153,7 +153,7 @@ export const changeUsername = async (req:AuthRequest, res:Response): Promise<voi
 /**
  * @route   PUT /api/v1/users/change-password
  * @desc    Change password of logged-in user
- * @access  Private (Driver or Rider)
+ * @access  Private (Facilitator, Learner, Admin)
  */
 export const changePassword = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -222,8 +222,8 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
 
 /**
  * @route   DELETE /api/v1/users/delete
- * @desc    Soft delete user account (mark as deleted)
- * @access  Private (Driver or Rider)
+ * @desc    delete user account (mark as deleted)
+ * @access  Private (Facilitator, Learner, Admin)
  */
 export const deleteAccount = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

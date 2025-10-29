@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login } from "../controllers/auth.controllers.ts";
+import { register, login } from "../controllers/auth.controller.ts";
 import { authenticate } from "../middlewares/auth.middleware.ts";
 import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
 
