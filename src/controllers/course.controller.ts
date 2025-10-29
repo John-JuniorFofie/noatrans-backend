@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import Course from "../models/course.model.ts";
 import type { AuthRequest } from "../types/authRequest.ts";
 import mongoose from "mongoose";
-import users from "../models/user.model.ts";
+// import users from "../models/user.model.ts";
 
 /**
  *  Create a new course
@@ -61,7 +61,7 @@ export const applyCourse= async (req: AuthRequest, res: Response, next: NextFunc
     if (!title || !language) {
       return res.status(400).json({
         success: false,
-        message: "Pickup and dropoff are required",
+        message: "titlle and language is required",
       });
     }
 
@@ -73,7 +73,7 @@ export const applyCourse= async (req: AuthRequest, res: Response, next: NextFunc
 
     res.status(201).json({
       success: true,
-      message: "Ride requested successfully.",
+      message: "Course applied succesfully successfully.",
       data: ride,
     });
   } catch (error) {
