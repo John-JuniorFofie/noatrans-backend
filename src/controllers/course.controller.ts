@@ -104,44 +104,6 @@ export const enrollInCourse = async (req: AuthRequest, res: Response, next: Next
 };
 
 
-//  Enroll learner into a course
-export const enrollCourse = async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req.user?.userId;
-    const userRole = req.user?.role;
-    const { courseId } = req.body;
-
-    if (userRole !== "Learner") {
-      return res.status(403).json({ success: false, message: "Only learners can enroll in courses" });
-    }
-
-    const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ success: false, message: "Course not found" });
-
-    // prevent duplicate enrollment
-    const existingEnrollment = await Enrollment.findOne({ userId, courseId });
-    if (existingEnrollment) {
-      return res.status(400).json({ success: false, message: "You are already enrolled in this course" });
-    }
-
-    const newEnrollment = await Enrollment.create({
-      userId,
-      courseId,
-      status: EnrollmentStatus.APPROVED,
-      progressPercent: 0,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Enrolled successfully",
-      data: newEnrollment,
-    });
-  } catch (error) {
-    console.error("Error enrolling in course:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
-
 /**
  * ================================
  *  FACILITATOR &  ADMIN ACTIONS

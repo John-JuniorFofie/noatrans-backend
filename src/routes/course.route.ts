@@ -6,6 +6,7 @@ import {
   deleteCourse,
   getAllCourses,
   getCourseById,
+   
 } from "../controllers/course.controller.ts";
 
 import { authenticate } from "../middlewares/auth.middleware.ts";
@@ -44,7 +45,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.get("/", getAllCourses);
+router.get("/",authenticate, authorizedRoles ("Faclilitator, Learner, Admin"), getAllCourses);
 
 /**
  * @swagger
@@ -77,7 +78,7 @@ router.get("/", getAllCourses);
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", getCourseById);
+router.get("/:id/getCourse",authenticate, authorizedRoles ("Faclilitator, Learner, Admin"), getCourseById);
 
 /**
  * @swagger
@@ -129,7 +130,7 @@ router.get("/:id", getCourseById);
  *       403:
  *         description: Access denied (only Facilitators can create courses)
  */
-router.post("/", authenticate, authorizedRoles("Facilitator"), createCourse);
+router.post("/create", authenticate, authorizedRoles("Facilitator"), createCourse);
 
 /**
  * @swagger
@@ -202,7 +203,7 @@ router.post("/:id/enroll", authenticate, authorizedRoles("Learner"), enrollInCou
  *       404:
  *         description: Course not found
  */
-router.patch("/:id", authenticate, authorizedRoles("Facilitator", "Admin"), updateCourse);
+router.patch("/:id/update", authenticate, authorizedRoles("Facilitator", "Admin"), updateCourse);
 
 /**
  * @swagger
@@ -228,6 +229,7 @@ router.patch("/:id", authenticate, authorizedRoles("Facilitator", "Admin"), upda
  *       404:
  *         description: Course not found
  */
-router.delete("/:id", authenticate, authorizedRoles("Facilitator", "Admin"), deleteCourse);
+router.delete("/:id/delete", authenticate, authorizedRoles("Facilitator", "Admin"), deleteCourse);
+
 
 export default router;
