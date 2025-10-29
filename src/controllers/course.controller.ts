@@ -1,161 +1,176 @@
-import type { Request, Response, NextFunction } from "express";
-import Course from "../models/course.model.ts";
-import type { AuthRequest } from "../types/authRequest.ts";
+import type { Response, NextFunction } from "express";
 import mongoose from "mongoose";
-// import users from "../models/user.model.ts";
+import Course from "../models/course.model.ts";
+import Enrollment from "../models/enrollment.model.ts";
+import type { AuthRequest } from "../types/authRequest.ts";
+import { EnrollmentStatus } from "../models/enrollment.model.ts";
 
 /**
- *  Create a new course
+ * ================================
+ *  FACILITATOR ACTIONS
+ * ================================
+ */
+
+/**
+ * @description Facilitator creates a new course
+ * @route POST /api/v1/courses
+ * @access Facilitator
  */
 export const createCourse = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { title, description, language, duration } = req.body;
-    const userId = req.user?.userId;
+    const { title, description, category, tags, price, durationMinutes } = req.body;
+    const user = req.user;
 
-    if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Unauthorized user" });
+    if (!user || user.role !== "Facilitator") {
+      return res.status(403).json({ success: false, message: "Access denied. Facilitators only." });
     }
 
-    if (!title || !description || !language) {
-      return res.status(400).json({
-        success: false,
-        message: "Title, description, and language are required",
-      });
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: "Title and description are required" });
     }
 
-    const course = await Course.create({
+    const newCourse = await Course.create({
       title,
       description,
-      language,
-      duration,
-      createdBy: new mongoose.Types.ObjectId(userId),
+      category,
+      tags,
+      price,
+      durationMinutes,
+      instructorId: new mongoose.Types.ObjectId(user.userId),
     });
 
     res.status(201).json({
       success: true,
       message: "Course created successfully",
-      data: course,
+      data: newCourse,
     });
   } catch (error) {
-    console.error({ message: "Error creating course", error });
-    res.status(500).json({ 
-      success: false, 
-      error: "Internal server error" });
+    console.error("Error creating course:", error);
+    next(error);
   }
 };
 
-  //  apply for a course
-export const applyCourse= async (req: AuthRequest, res: Response, next: NextFunction) => {
+/**
+ * ================================
+ *  LEARNER ACTIONS
+ * ================================
+ */
+
+/**
+ * @description Learner enrolls in a course
+ * @route POST /api/v1/courses/:id/enroll
+ * @access Learner
+ */
+export const enrollInCourse = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { title, language } = req.body;
+    const { id: courseId } = req.params;
+    const user = req.user;
+
+    if (!user || user.role !== "Learner") {
+      return res.status(403).json({ success: false, message: "Access denied. Learners only." });
+    }
+
+    const course = await Course.findOne({ _id: courseId, isDeleted: false });
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const existingEnrollment = await Enrollment.findOne({
+      userId: user.userId,
+      courseId,
+    });
+    if (existingEnrollment) {
+      return res.status(400).json({ success: false, message: "Already enrolled in this course" });
+    }
+
+    const enrollment = await Enrollment.create({
+      userId: new mongoose.Types.ObjectId(user.userId),
+      courseId: new mongoose.Types.ObjectId(courseId),
+      status: "approved",
+    });
+
+    course.learners.push(new mongoose.Types.ObjectId(req.user?.userId));
+    await course.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Enrollment successful",
+      data: enrollment,
+    });
+  } catch (error) {
+    console.error("Error enrolling in course:", error);
+    next(error);
+  }
+};
+
+
+//  Enroll learner into a course
+export const enrollCourse = async (req: AuthRequest, res: Response) => {
+  try {
     const userId = req.user?.userId;
+    const userRole = req.user?.role;
+    const { courseId } = req.body;
 
-    if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Unauthorized user" });
+    if (userRole !== "Learner") {
+      return res.status(403).json({ success: false, message: "Only learners can enroll in courses" });
     }
 
-    if (!title || !language) {
-      return res.status(400).json({
-        success: false,
-        message: "titlle and language is required",
-      });
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).json({ success: false, message: "Course not found" });
+
+    // prevent duplicate enrollment
+    const existingEnrollment = await Enrollment.findOne({ userId, courseId });
+    if (existingEnrollment) {
+      return res.status(400).json({ success: false, message: "You are already enrolled in this course" });
     }
 
-    const ride = await Course.create({
-      title,
-      language,
-      rider: userId,
+    const newEnrollment = await Enrollment.create({
+      userId,
+      courseId,
+      status: EnrollmentStatus.APPROVED,
+      progressPercent: 0,
     });
 
     res.status(201).json({
       success: true,
-      message: "Course applied succesfully successfully.",
-      data: ride,
+      message: "Enrolled successfully",
+      data: newEnrollment,
     });
   } catch (error) {
-    console.error({ message: "Error requesting ride", error });
-    res.status(500).json({ success: false, error: "Internal server error" });
-  }
-};
-
-
-/**
- *  Get all active courses
- */
-export const getAllCourses = async (req: Request, res: Response) => {
-  try {
-    const courses = await Course.find({ isDeleted: false }).sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      message: "Courses fetched successfully",
-      data: courses,
-    });
-  } catch (error) {
-    console.error({ 
-      message: "Error fetching courses", 
-      error });
-    res.status(500).json({ 
-      success: false, 
-      error: "Internal server error" });
+    console.error("Error enrolling in course:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 /**
- * Get a single course by ID
+ * ================================
+ *  FACILITATOR &  ADMIN ACTIONS
+ * ================================
  */
-export const getCourseById = async (req: Request, res: Response) => {
-  try {
-    const courseId = req.params.id;
-
-    const course = await Course.findOne({ _id: courseId, isDeleted: false });
-    if (!course) {
-      return res.status(404).json({
-         success: false, 
-         message: "Course not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Course fetched successfully",
-      data: course,
-    });
-  } catch (error) {
-    console.error({ 
-      message: "Error fetching course", error });
-    res.status(500).json({
-       success: false, 
-       error: "Internal server error" });
-  }
-};
 
 /**
- *  Update a course
+ * @description Facilitator/Admin updates a course
+ * @route PATCH /api/v1/courses/:id
+ * @access Facilitator, Admin
  */
-export const updateCourse = async (req: AuthRequest, res: Response) => {
+export const updateCourse = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const courseId = req.params.id;
-    const userId = req.user?.userId;
+    const { id: courseId } = req.params;
     const updates = req.body;
+    const user = req.user;
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized user" });
+    if (!user || (user.role !== "Facilitator" && user.role !== "Admin")) {
+      return res.status(403).json({ success: false, message: "Access denied. Facilitator or Admin only." });
     }
 
     const course = await Course.findOneAndUpdate(
       { _id: courseId, isDeleted: false },
-      { $set: updates, updatedAt: new Date() },
+      { $set: updates },
       { new: true }
     );
 
     if (!course) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Course not found" });
+      return res.status(404).json({ success: false, message: "Course not found" });
     }
 
     res.status(200).json({
@@ -164,46 +179,133 @@ export const updateCourse = async (req: AuthRequest, res: Response) => {
       data: course,
     });
   } catch (error) {
-    console.error({ 
-      message: "Error updating course", error });
-    res.status(500).json({ 
-      success: false, 
-      error: "Internal server error" });
+    console.error("Error updating course:", error);
+    next(error);
   }
 };
 
 /**
- *  delete a course
+ * @description Facilitator/Admin deletes a course (soft delete)
+ * @route DELETE /api/v1/courses/:id
+ * @access Facilitator, Admin
  */
-export const deleteCourse = async (req: AuthRequest, res: Response) => {
+export const deleteCourse = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const courseId = req.params.id;
-    const userId = req.user?.userId;
+    const { id: courseId } = req.params;
+    const user = req.user;
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized user" });
+    if (!user || (user.role !== "Facilitator" && user.role !== "Admin")) {
+      return res.status(403).json({ success: false, message: "Access denied. Facilitator or Admin only." });
     }
 
-    const course = await Course.findOne({ _id: courseId, isDeleted: false });
+    const course = await Course.findById(courseId);
     if (!course) {
-      return res.status(404).json({
-         success: false, 
-         message: "Course not found" });
+      return res.status(404).json({ success: false, message: "Course not found" });
     }
 
     course.isDeleted = true;
-    course.deletedAt = new Date();
     await course.save();
 
     res.status(200).json({
       success: true,
-      message: "Course deleted successfully ",
+      message: "Course deleted successfully (soft delete)",
+    });
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    next(error);
+  }
+};
+
+/**
+ * ================================
+ *  PUBLIC ACTIONS
+ * ================================
+ */
+
+/**
+ * @description Get all published, non-deleted courses
+ * @route GET /api/v1/courses
+ * @access Public
+ */
+export const getAllCourses = async (_req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const courses = await Course.find({ isDeleted: false }).populate("instructorId", "fullName email role");
+    res.status(200).json({
+      success: true,
+      count: courses.length,
+      data: courses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    next(error);
+  }
+};
+
+/**
+ * @description Get details of a single course
+ * @route GET /api/v1/courses/:id
+ * @access Public
+ */
+export const getCourseById = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findOne({ _id: id, isDeleted: false }).populate("instructorId", "fullName email role");
+
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    res.status(200).json({
+      success: true,
       data: course,
     });
   } catch (error) {
-    console.error({ message: "Error deleting course", error });
-    res.status(500).json({ 
-      success: false, 
-      error: "Internal server error" });
+    console.error("Error fetching course:", error);
+    next(error);
   }
 };
+// Get all courses a learner enrolled in
+export const getMyEnrollments = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+    const enrollments = await Enrollment.find({ userId }).populate("courseId", "title description language level");
+
+    res.status(200).json({
+      success: true,
+      message: "Enrolled courses fetched successfully",
+      data: enrollments,
+    });
+  } catch (error) {
+    console.error("Error fetching enrolled courses:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// Update learner's progress in a course
+export const updateProgress = async (req: AuthRequest, res: Response) => {
+  try {
+    const { enrollmentId } = req.params;
+    const { progressPercent } = req.body;
+
+    const enrollment = await Enrollment.findById(enrollmentId);
+    if (!enrollment) return res.status(404).json({ success: false, message: "Enrollment not found" });
+
+    enrollment.progressPercent = progressPercent;
+    if (progressPercent >= 100) {
+      enrollment.status = EnrollmentStatus.COMPLETED;
+      enrollment.completedAt = new Date();
+    }
+
+    await enrollment.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Progress updated successfully",
+      data: enrollment,
+    });
+  } catch (error) {
+    console.error("Error updating progress:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+

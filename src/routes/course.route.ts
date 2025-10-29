@@ -1,31 +1,93 @@
 import express from "express";
 import {
   createCourse,
-  getAllCourses,
-  getCourseById,
+  enrollInCourse,
   updateCourse,
   deleteCourse,
+  getAllCourses,
+  getCourseById,
 } from "../controllers/course.controller.ts";
 
 import { authenticate } from "../middlewares/auth.middleware.ts";
 import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
+
 const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: Courses
- *   description: API endpoints for managing Ghanaian language courses
+ *   description: Course management and enrollment endpoints
  */
 
 /**
  * @swagger
  * /api/v1/courses:
+ *   get:
+ *     summary: Get all available courses
+ *     tags: [Courses]
+ *     description: Fetch all non-deleted and published courses.
+ *     responses:
+ *       200:
+ *         description: Courses fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: true
+ *               count: 2
+ *               data:
+ *                 - id: 662f0a8d12adf92b1c33ab1a
+ *                   title: "Twi Beginner Course"
+ *                   description: "Learn Twi from scratch"
+ *                   facilitator: "Kofi Manu"
+ *                   price: 0
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/", getAllCourses);
+
+/**
+ * @swagger
+ * /api/v1/courses/{id}:
+ *   get:
+ *     summary: Get course details
+ *     tags: [Courses]
+ *     description: Retrieve a single course by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Course ID
+ *     responses:
+ *       200:
+ *         description: Course details
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: true
+ *               data:
+ *                 id: 662f0a8d12adf92b1c33ab1a
+ *                 title: "Twi Beginner Course"
+ *                 description: "Learn Twi step-by-step"
+ *                 facilitator: "Kofi Manu"
+ *       404:
+ *         description: Course not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/:id", getCourseById);
+
+/**
+ * @swagger
+ * /api/v1/courses:
  *   post:
- *     tags:
- *       - Courses
- *     summary: Create a new course
- *     description: Adds a new course to the platform with details such as title, description, level, and instructor.
+ *     summary: Create a new course (Facilitator only)
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Facilitator creates a new course.
  *     requestBody:
  *       required: true
  *       content:
@@ -34,153 +96,91 @@ const router = express.Router();
  *             type: object
  *             required:
  *               - title
- *               - language
  *               - description
- *               - level
- *               - duration
- *               - facilitator
  *             properties:
  *               title:
  *                 type: string
- *                 example: "Twi for Beginners"
- *               language:
- *                 type: string
- *                 example: "Twi"
+ *                 example: "Ewe Basic Phrases"
  *               description:
  *                 type: string
- *                 example: "An introductory course to the Twi language for non-native speakers."
- *               level:
+ *                 example: "Master common Ewe greetings and expressions."
+ *               category:
  *                 type: string
- *                 enum: [Beginner, Intermediate, Advanced]
- *                 example: "Beginner"
- *               duration:
- *                 type: string
- *                 example: "4 weeks"
- *               instructor:
- *                 type: string
- *                 example: "Kwame Mensah"
- *               lessons:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["Lesson 1: Greetings", "Lesson 2: Numbers"]
+ *                 example: "Languages"
+ *               price:
+ *                 type: number
+ *                 example: 0
+ *               durationMinutes:
+ *                 type: number
+ *                 example: 120
  *     responses:
  *       201:
- *         description: Course created successfully.
+ *         description: Course created successfully
  *         content:
  *           application/json:
  *             example:
  *               success: true
  *               message: "Course created successfully"
  *               data:
- *                 id: "6712a93db243cd82c8b13eab"
- *                 title: "Twi for Beginners"
+ *                 id: "66ef0c7892adf92b1c33ab1a"
+ *                 title: "Ewe Basic Phrases"
  *       400:
- *         description: Missing or invalid fields.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Invalid input data"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Failed to create course"
+ *         description: Missing required fields
+ *       403:
+ *         description: Access denied (only Facilitators can create courses)
  */
-router.post("/create", authenticate, authorizedRoles("Facilitator"), createCourse);
+router.post("/", authenticate, authorizedRoles("Facilitator"), createCourse);
 
 /**
  * @swagger
- * /api/v1/courses:
- *   get:
- *     tags:
- *       - Courses
- *     summary: Get all courses
- *     description: Retrieves a list of all available courses.
+ * /api/v1/courses/{id}/enroll:
+ *   post:
+ *     summary: Enroll in a course (Learner only)
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Allows a learner to enroll in a course.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Course ID
  *     responses:
  *       200:
- *          description: A list of all courses.
+ *         description: Enrollment successful
  *         content:
  *           application/json:
  *             example:
  *               success: true
- *               count: 3
+ *               message: "Enrollment successful"
  *               data:
- *                 - title: "Twi for Beginners"
- *                   language: "Twi"
- *                 - title: "Ewe for Beginners"
- *                   language: "Ewe"
- *       500:
- *         description: Failed to fetch courses.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Failed to fetch courses"
+ *                 courseId: "66ef0c7892adf92b1c33ab1a"
+ *                 userId: "66ef0c7892adf92b1c33ab1b"
+ *       400:
+ *         description: Already enrolled
+ *       403:
+ *         description: Only learners can enroll
  */
-router.get("/getAllCourses",authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), getAllCourses);
+router.post("/:id/enroll", authenticate, authorizedRoles("Learner"), enrollInCourse);
 
 /**
  * @swagger
  * /api/v1/courses/{id}:
- *   get:
- *     tags:
- *       - Courses
- *     summary: Get a course by ID
- *     description: Retrieves details for a single course using its ID.
+ *   patch:
+ *     summary: Update course details (Facilitator/Admin)
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Facilitators or admins can update course details.
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
  *         required: true
- *         description: The unique ID of the course
  *         schema:
  *           type: string
- *     responses:
- *       200:
- *         description: Course retrieved successfully.
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               data:
- *                 id: "6712a93db243cd82c8b13eab"
- *                 title: "Ga Language Basics"
- *                 level: "Beginner"
- *       404:
- *         description: Course not found.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Course not found"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Failed to fetch course"
- */
-router.get("/:id/getOnecourse",authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), getCourseById);
-
-/**
- * @swagger
- * /api/v1/courses/{id}:
- *   put:
- *     tags:
- *       - Courses
- *     summary: Update a course
- *     description: Updates details of an existing course by its ID.
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: The ID of the course to update
- *         schema:
- *           type: string
+ *         description: Course ID
  *     requestBody:
  *       required: true
  *       content:
@@ -191,72 +191,43 @@ router.get("/:id/getOnecourse",authenticate, authorizedRoles("Facilitator", "Lea
  *               title:
  *                 type: string
  *                 example: "Updated Twi Course"
- *               duration:
+ *               description:
  *                 type: string
- *                 example: "6 weeks"
+ *                 example: "Learn Twi from beginner to advanced level."
  *     responses:
  *       200:
- *         description: Course updated successfully.
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               message: "Course updated successfully"
+ *         description: Course updated successfully
+ *       403:
+ *         description: Forbidden - only facilitator or admin can update
  *       404:
- *         description: Course not found.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Course not found"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Failed to update course"
+ *         description: Course not found
  */
-router.put("/:id/update",authenticate, authorizedRoles("Facilitator", "Learner", "Admin"), updateCourse);
+router.patch("/:id", authenticate, authorizedRoles("Facilitator", "Admin"), updateCourse);
 
 /**
  * @swagger
  * /api/v1/courses/{id}:
  *   delete:
- *     tags:
- *       - Courses
- *     summary: Delete a course
- *     description: Deletes an existing course by its ID.
+ *     summary: Delete (soft delete) a course (Facilitator/Admin)
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Facilitators or Admins can delete a course (soft delete).
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
  *         required: true
- *         description: The unique ID of the course
  *         schema:
  *           type: string
+ *         description: Course ID
  *     responses:
  *       200:
- *         description: Course deleted successfully.
- *         content:
- *           application/json:
- *             example:
- *               success: true
- *               message: "Course deleted successfully"
+ *         description: Course deleted successfully
+ *       403:
+ *         description: Access denied
  *       404:
- *         description: Course not found.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Course not found"
- *       500:
- *         description: Internal server error.
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Failed to delete course"
+ *         description: Course not found
  */
-router.delete("/:id/delete",authenticate, authorizedRoles("Facilitator", "Admin"),deleteCourse);
+router.delete("/:id", authenticate, authorizedRoles("Facilitator", "Admin"), deleteCourse);
 
 export default router;
