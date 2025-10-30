@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import Course from "../models/course.model.ts";
 import Enrollment from "../models/enrollment.model.ts";
 import type { AuthRequest } from "../types/authRequest.ts";
-import { EnrollmentStatus } from "../models/enrollment.model.ts";
+// import type{ EnrollmentStatus } from "../models/enrollment.model.ts";
 
 /**
  * ================================
@@ -254,7 +254,7 @@ export const updateProgress = async (req: AuthRequest, res: Response) => {
 
     enrollment.progressPercent = progressPercent;
     if (progressPercent >= 100) {
-      enrollment.status = EnrollmentStatus.COMPLETED;
+      enrollment.status = "completed";
       enrollment.completedAt = new Date();
     }
 

@@ -8,12 +8,7 @@ import mongoose, { Schema, Document } from "mongoose";
  * - rejected: enrollment denied by admin/facilitator
  * - completed: learner has finished the course
  */
-export enum EnrollmentStatus {
-  PENDING = "pending",
-  APPROVED = "approved",
-  REJECTED = "rejected",
-  COMPLETED = "completed",
-}
+export type EnrollmentStatus= "pending" |"approved" | "rejected" |"completed"
 
 /**
  * @interface IEnrollment
@@ -43,8 +38,8 @@ const enrollmentSchema = new Schema<IEnrollment>(
     },
     status: {
       type: String,
-      enum: Object.values(EnrollmentStatus),
-      default: EnrollmentStatus.APPROVED,
+      enum: ["pending", "approved", "rejected", "completed"],
+      default: "pending",
     },
     progressPercent: {
       type: Number,

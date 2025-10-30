@@ -1,24 +1,19 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 /**
- * @enum Role
  * Defines user access levels within NoaTrans
  * - Learner: Can enroll in courses and take quizzes
  * - Facilitator: Can create, edit, and manage courses/lessons
  * - Admin: Full access including user management
  */
-export enum Role {
-  LEARNER = "Learner",
-  FACILITATOR = "Facilitator",
-  ADMIN = "Admin",
-}
+export type RoleType = "Learner" | "Facilitator" | "Admin";
 
 export interface IUser extends Document {
   fullName: string;
   userName: string;
   email: string;
   passwordHash: string;
-  role: Role;
+  role: RoleType;
   isActive: boolean;
   isDeleted: boolean;
   avatarUrl?: string;
@@ -35,9 +30,9 @@ const userSchema = new Schema<IUser>(
       trim: true 
     },
     userName: {
-       type: String, 
-       required: true, 
-       unique: true 
+      type: String, 
+      required: true, 
+      unique: true 
     },
     email: { 
       type: String, 
@@ -45,24 +40,24 @@ const userSchema = new Schema<IUser>(
       unique: true 
     },
     passwordHash: {
-       type: String,
-        required: true 
+      type: String,
+      required: true 
     },
     role: {
       type: String,
-      enum: Object.values(Role),
-      default: Role.LEARNER,
+      enum: ["Learner", "Facilitator", "Admin"],
+      default: "Learner", 
     },
     isActive: { 
       type: Boolean, 
-      default: true },
+      default: true 
+    },
     isDeleted: { 
       type: Boolean, 
       default: false 
     },
     avatarUrl: { 
-      type: 
-      String 
+      type: String 
     },
     learners: [{ type: Schema.Types.ObjectId, ref: "User" }]
   },
