@@ -13,7 +13,7 @@ import { authenticate } from "../middlewares/auth.middleware.ts";
 import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
 
 const router = express.Router();
-
+  
 /**
  * @swagger
  * tags:
@@ -78,7 +78,7 @@ router.get("/",authenticate, authorizedRoles ("Faclilitator, Learner, Admin"), g
  *       500:
  *         description: Internal server error
  */
-router.get("/:id/getCourse",authenticate, authorizedRoles ("Faclilitator, Learner, Admin"), getCourseById);
+router.get("/:id/",authenticate, authorizedRoles ("Facilitator, Learner, Admin"), getCourseById);
 
 /**
  * @swagger
@@ -164,7 +164,7 @@ router.post("/create", authenticate, authorizedRoles("Facilitator"), createCours
  *       403:
  *         description: Only learners can enroll
  */
-router.post("/:id/enroll", authenticate, authorizedRoles("Learner"), enrollInCourse);
+router.post("/:courseId/enroll", authenticate, authorizedRoles("Learner"), enrollInCourse);
 
 /**
  * @swagger

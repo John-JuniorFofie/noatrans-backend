@@ -1,6 +1,6 @@
 import express from "express";
 import authRouter from "./auth.route.ts";
-import userRouter from "./User.route.ts";
+import userRouter from "./user.route.ts";
 import coursesRouter from "./course.route.ts";
 
 

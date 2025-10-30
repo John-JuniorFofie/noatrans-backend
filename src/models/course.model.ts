@@ -1,67 +1,65 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 /**
- * Defines user access levels within NoaTrans
- * - Learner: Can enroll in courses and take quizzes
- * - Facilitator: Can create, edit, and manage courses/lessons
- * - Admin: Full access including user management
+ * @interface ICourse
+ * Represents a language course on the NoaTrans platform.
  */
-export type RoleType = "Learner" | "Facilitator" | "Admin";
-
-export interface IUser extends Document {
-  fullName: string;
-  userName: string;
-  email: string;
-  passwordHash: string;
-  role: RoleType;
-  isActive: boolean;
+export interface ICourse extends Document {
+  title: string;
+  description: string;
+  language: string;
+  level: string;
+  facilitator?: mongoose.Types.ObjectId; // user who created the course
+  learners: mongoose.Types.ObjectId[];   // users enrolled in this course
   isDeleted: boolean;
-  avatarUrl?: string;
   createdAt: Date;
-  updatedAt?: Date;
-  learners: mongoose.Types.ObjectId[];
+  updatedAt: Date;
 }
 
-const userSchema = new Schema<IUser>(
+const courseSchema = new Schema<ICourse>(
   {
-    fullName: { 
-      type: String, 
-      required: true, 
-      trim: true 
-    },
-    userName: {
-      type: String, 
-      required: true, 
-      unique: true 
-    },
-    email: { 
-      type: String, 
-      required: true, 
-      unique: true 
-    },
-    passwordHash: {
+    title: {
       type: String,
-      required: true 
+      required: true,
+      trim: true,
     },
-    role: {
+    description: {
       type: String,
-      enum: ["Learner", "Facilitator", "Admin"],
-      default: "Learner", 
+      required: true,
+      trim: true,
     },
-    isActive: { 
-      type: Boolean, 
-      default: true 
+    language: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    isDeleted: { 
-      type: Boolean, 
-      default: false 
+    level: {
+      type: String,
+      required: true,
+      enum: ["Beginner", "Intermediate", "Advanced"],
+      default: "Beginner",
     },
-    avatarUrl: { 
-      type: String 
+    facilitator: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: false,
     },
-    learners: [{ type: Schema.Types.ObjectId, ref: "User" }]
+    learners: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        null: true,
+      },
+    ],
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<IUser>("User", userSchema);
+
+const Course = mongoose.model<ICourse>("Course", courseSchema);
+
+export default Course;

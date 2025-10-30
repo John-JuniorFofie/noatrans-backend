@@ -39,7 +39,7 @@ const enrollmentSchema = new Schema<IEnrollment>(
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "completed"],
-      default: "pending",
+      default: "approved",
     },
     progressPercent: {
       type: Number,
@@ -65,4 +65,7 @@ const enrollmentSchema = new Schema<IEnrollment>(
 // Prevent duplicate enrollments for the same user + course
 enrollmentSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 
-export default mongoose.model<IEnrollment>("Enrollment", enrollmentSchema);
+// export default mongoose.model<IEnrollment>("Enrollment", enrollmentSchema);
+const Enrollment =mongoose.model<IEnrollment>("Enrollment", enrollmentSchema);
+export default Enrollment;
+
