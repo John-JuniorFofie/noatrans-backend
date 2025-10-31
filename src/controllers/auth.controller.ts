@@ -2,7 +2,7 @@ import type{Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/user.model.ts';
-import type{CustomJwtPayload} from '../types/authRequest.ts';
+// import type{CustomJwtPayload} from '../types/authRequest.ts';
 import dotenv from "dotenv";
 
 dotenv.config();

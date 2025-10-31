@@ -8,7 +8,7 @@ import indexRouter from "./routes/index.route.ts";
 import swagger from "swagger-ui-express";
 import swaggerSpec from "./services/swagger.ts";
 // import { authenticate } from "./middlewares/auth.middleware.ts";
-// import employeeRouter from "./Routes/employee.routes.ts";
+
 
 dotenv.config();
 // Connect to the database
@@ -18,13 +18,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 // Middleware
 
-// CORS configuration
-// app.use(cors(
-//   { jj
-//     origin:(_origin, callback)=>callback(null,true),
-//     credentials:true,
-//   }
-// ));
+//CORS configuration//
+app.use(cors(
+  {
+    origin:(_origin, callback)=>callback(null,true),
+    credentials:true,
+  }
+));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api-docs", swagger.serve, swagger.setup(swaggerSpec));

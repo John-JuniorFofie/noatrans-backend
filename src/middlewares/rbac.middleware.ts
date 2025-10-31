@@ -1,6 +1,6 @@
 import type {Request, Response, NextFunction} from "express";
 
-//Role based controles// user and Driver
+//Role based controles//  Learner, Facilitator and Admin
 
 interface AuthRequest extends Request {
   user?: {role: String};

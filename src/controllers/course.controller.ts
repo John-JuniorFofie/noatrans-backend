@@ -79,7 +79,7 @@ export const getAllCourses = async (_req: Request, res: Response) => {
  * ============================== */
 export const getCourseById = async (req: Request, res: Response) => {
   try {
-    const courseId = req.params.id;
+    const {courseId} = req.params;
     const course = await Course.findById(courseId)
       .populate("facilitator", "fullName email")
       .populate("learners", "fullName email");
@@ -106,9 +106,9 @@ export const getCourseById = async (req: Request, res: Response) => {
  * ============================== */
 export const updateCourse = async (req: Request, res: Response) => {
   try {
-    const courseId = req.params.id;
-    const userId = (req as any).user?.userId;
-    const role = (req as any).user?.role;
+    const {courseId} = req.params;
+    const {userId} = (req as any).user;
+    const {role} = (req as any).user;
     const { title, description, language, level } = req.body;
 
     const course = await Course.findById(courseId);
@@ -122,7 +122,7 @@ export const updateCourse = async (req: Request, res: Response) => {
     // only facilitator (who created) or admin can update
     if (
       role !== "Admin" &&
-      course.facilitator?.toString() !== userId.toString()
+      course.Facilitator?.toString() !== userId.toString()
     ) {
       return res.status(403).json({
         success: false,
@@ -155,9 +155,9 @@ export const updateCourse = async (req: Request, res: Response) => {
  * ============================== */
 export const deleteCourse = async (req: Request, res: Response) => {
   try {
-    const courseId = req.params.id;
-    const userId = (req as any).user?.userId;
-    const role = (req as any).user?.role;
+    const {courseId} = req.params;
+    const {userId} = (req as any).user;
+    const {role} = (req as any).user;
 
     const course = await Course.findById(courseId);
     if (!course) {
@@ -169,7 +169,7 @@ export const deleteCourse = async (req: Request, res: Response) => {
 
     if (
       role !== "Admin" &&
-      course.facilitator?.toString() !== userId.toString()
+      course.Facilitator?.toString() !== userId.toString()
     ) {
       return res.status(403).json({
         success: false,
@@ -199,8 +199,8 @@ export const deleteCourse = async (req: Request, res: Response) => {
 export const enrollInCourse = async (req: Request, res: Response) => {
   try {
     const { courseId } = req.params;
-    const userId = (req as any).user?.userId;
-    const role = (req as any).user?.role;
+    const {userId} = (req as any).user;
+    const {role }= (req as any).user;
 
     if (role !== "Learner") {
       return res.status(403).json({
@@ -218,14 +218,14 @@ export const enrollInCourse = async (req: Request, res: Response) => {
     }
 
     // check if already enrolled
-    if (course.learners.includes(userId)) {
+    if (course.Learners.includes(userId)) {
       return res.status(400).json({
         success: false,
         message: "You are already enrolled in this course.",
       });
     }
 
-    course.learners.push(new mongoose.Types.ObjectId(userId));
+    course.Learners.push(new mongoose.Types.ObjectId(userId));
     await course.save();
 
     const enrollment = await Enrollment.create({

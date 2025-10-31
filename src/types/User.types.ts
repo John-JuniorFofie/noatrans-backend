@@ -6,7 +6,6 @@ export interface IUser extends Document {
      email: string;
      password: string;
      role: UserRole;
-     phoneNumber?:String;
      isAvailable?: boolean; 
      isAccountDeleted?:boolean;
      passwordChangedAt?:Date;

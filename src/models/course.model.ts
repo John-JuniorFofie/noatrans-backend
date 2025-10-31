@@ -9,8 +9,9 @@ export interface ICourse extends Document {
   description: string;
   language: string;
   level: string;
-  facilitator?: mongoose.Types.ObjectId; // user who created the course
-  learners: mongoose.Types.ObjectId[];   // users enrolled in this course
+  Facilitator?: mongoose.Types.ObjectId; // user who created the course
+  Learners: mongoose.Types.ObjectId[];   // users enrolled in this course
+  Admin:mongoose.Types.ObjectId; //users who manages the entire system
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -39,16 +40,21 @@ const courseSchema = new Schema<ICourse>(
       enum: ["Beginner", "Intermediate", "Advanced"],
       default: "Beginner",
     },
-    facilitator: {
+    Facilitator: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: false,
     },
-    learners: [
+    Learners: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
-        null: true,
+      },
+    ],
+    Admin: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
     isDeleted: {
