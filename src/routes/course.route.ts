@@ -7,6 +7,7 @@ import {
   restoreCourse,
   getAllCourses,
   getCourseById,
+  getAllEnrolled, 
    
 } from "../controllers/course.controller.ts";
 
@@ -262,6 +263,7 @@ router.patch("/:courseId/update", authenticate, authorizedRoles("Facilitator", "
  *         description: Course not found
  */
 router.delete("/:courseId/delete", authenticate, authorizedRoles("Facilitator", "Admin"), deleteCourse);
+router.get("/enrollments", authenticate, authorizedRoles("Admin"), getAllEnrolled);
 
 
 export default router;

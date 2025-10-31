@@ -57,11 +57,10 @@ export const createCourse = async (req: Request, res: Response) => {
 /** 
  *  GET ALL COURSES
  * */
-export const getAllCourses = async (_req: Request, res: Response) => {
+export const getAllCourses = async (req: Request, res: Response) => {
   try {
     const courses = await Course.find({ isDeleted: false })
       .populate("Facilitator", "fullName email")
-      .populate("Learners", "fullName email");
 
     res.status(200).json({
       success: true,
@@ -268,32 +267,58 @@ export const enrollInCourse = async (req: Request, res: Response) => {
     }
 
     // check if already enrolled
-    if (course.Learners.includes(userId)) {
+    if (await Enrollment.findOne({ userId, courseId })) {
       return res.status(400).json({
         success: false,
         message: "You are already enrolled in this course.",
       });
     }
 
-    course.Learners.push(new mongoose.Types.ObjectId(userId));
-    await course.save();
-
     const enrollment = await Enrollment.create({
       courseId,
       userId,
-      status: "pending",
       progressPercent: 0,
     });
 
     res.status(200).json({
       success: true,
-      message: "Enrollment successful. Awaiting approval.",
+      message: "Enrollment successful.",
       data: enrollment,
     });
+    
   } catch (error) {
     console.error("Error enrolling in course:", error);
     res.status(500).json({
        success: false, 
        message: "Internal server error" });
+  }
+};
+
+
+
+/** 
+ *  GET ALL  ENROLLED LEARNERS FOR ADMIN
+ * */
+export const getAllEnrolled = async (req: Request, res: Response) => {
+  try {
+   const {userId,role} = (req as any).user;
+
+    if (role !== "Admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Only admins can view all enrolled learners.",
+      });
+    }
+    const courses = await Enrollment.find({ isEnrolled: true })
+      .populate("userId", "fullName email")
+
+    res.status(200).json({
+      success: true,
+      message: "All Learners fetched successfully.",
+      data: courses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

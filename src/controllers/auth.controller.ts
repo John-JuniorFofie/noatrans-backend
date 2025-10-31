@@ -55,8 +55,8 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing username
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
+        const existingUsername = await User.findOne({ userName });
+        if (existingUsername) {
             res.status(400).json({
                 success: false,
                 message: "User already exists, try logging in."
@@ -65,25 +65,26 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing user
-        // const existingUser = await User.findOne({ email });
-        // if (existingUser) {
-        //     //Restore the user's account if it was deleted
-        //     if (existingUser.isAccountDeleted) {
-        //         existingUser.isAccountDeleted = false;
-        //         await existingUser.save();
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            res.status(400).json({
+                success: false,
+                message: 'User already exists, try logging in.',
+            });
+            return;
+        }
 
-        //         res.status(200).json({
-        //             success: true,
-        //             message: 'Account restored successfully. Please log in.',
-        //         });
-        //         return;
-        //     }
-        //     res.status(400).json({
-        //         success: false,
-        //         message: 'User already exists, try logging in.',
-        //     });
-        //     return;
-        // }
+        //check for existing admin
+
+        if (role === "Admin"){
+        const existingAdmin = await User.findOne({role:'Admin'});
+        if(existingAdmin){
+            res.status(400).json({
+                success:false,
+                message:"An admin account already exists"
+            });return;
+        }
+
 
         //Hash Password
         const salt = await bcrypt.genSalt(10);
@@ -104,12 +105,12 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
             message: "User registered successfully",
         });
 
-    } catch (error: unknown) {
+    }} catch (error: unknown) {
         console.log({message: "Error signing up user", error: error});
         res.status(500).json({ success: false, error: "Internal Server Error" });
         return
     }
-}
+};
 
 
 //@route POST /api/v1/auth/login

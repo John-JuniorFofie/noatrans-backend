@@ -14,6 +14,6 @@ rootRouter.use('/auth',authRouter);
 rootRouter.use('/users',userRouter);    
 
 //course routes
-rootRouter.use('/course',coursesRouter);
+rootRouter.use('/courses',coursesRouter);
 
 export default rootRouter; 

@@ -17,11 +17,12 @@ export type EnrollmentStatus= "pending" |"approved" | "rejected" |"completed"
 export interface IEnrollment extends Document {
   userId: mongoose.Types.ObjectId; // learner
   courseId: mongoose.Types.ObjectId; // course
-  status: EnrollmentStatus;
+  status?: EnrollmentStatus;
   progressPercent: number;
   enrolledAt: Date;
   completedAt?: Date;
   isActive: boolean;
+  isEnrolled?: boolean;
 }
 
 const enrollmentSchema = new Schema<IEnrollment>(
@@ -36,11 +37,11 @@ const enrollmentSchema = new Schema<IEnrollment>(
       ref: "Course",
       required: true,
     },
-    status: {
-      type: String,
-      enum: ["pending", "approved", "rejected", "completed"],
-      default: "approved",
-    },
+    // status: {
+    //   type: String,
+    //   enum: ["pending", "approved", "rejected", "completed"],
+    //   default: "approved",
+    // },
     progressPercent: {
       type: Number,
       default: 0,
@@ -55,6 +56,10 @@ const enrollmentSchema = new Schema<IEnrollment>(
       type: Date,
     },
     isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isEnrolled: {
       type: Boolean,
       default: true,
     },
