@@ -4,6 +4,7 @@ import {
   enrollInCourse,
   updateCourse,
   deleteCourse,
+  restoreCourse,
   getAllCourses,
   getCourseById,
    
@@ -203,6 +204,37 @@ router.post("/:courseId/enroll", authenticate, authorizedRoles("Learner"), enrol
  *       404:
  *         description: Course not found
  */
+
+/**
+ * @swagger
+ * /api/v1/course/{id}/restore:
+ *   patch:
+ *     summary: Restore a deleted course (Admin / Facilitator)
+ *     tags: [Courses]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Allows an admin or facilitator to restore a previously soft-deleted course.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Course ID
+ *     responses:
+ *       200:
+ *         description: Course restored successfully
+ *       400:
+ *         description: Course already active
+ *       403:
+ *         description: Unauthorized
+ *       404:
+ *         description: Course not found
+ */
+router.patch("/:courseId/restore",authenticate,authorizedRoles("Facilitator", "Admin"),restoreCourse
+);
+
+
 router.patch("/:courseId/update", authenticate, authorizedRoles("Facilitator", "Admin"), updateCourse);
 
 /**

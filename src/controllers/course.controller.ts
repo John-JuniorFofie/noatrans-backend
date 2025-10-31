@@ -4,17 +4,17 @@ import Enrollment from "../models/enrollment.model.ts";
 import mongoose from "mongoose";
 
 /**
- * ===============================
+ * 
  * COURSE CONTROLLERS — NOATRANS
- * ===============================
+ *
  * Facilitator → Create / Edit / Delete
  * Learner → Enroll
  * Admin → Edit / Delete / View all
  */
 
-/** ==============================
+/** 
  *  FACILITATOR — CREATE COURSE
- * ============================== */
+ *  */
 export const createCourse = async (req: Request, res: Response) => {
   try {
     const { title, description, language, level } = req.body;
@@ -54,9 +54,9 @@ export const createCourse = async (req: Request, res: Response) => {
   }
 };
 
-/** ==============================
+/** 
  *  GET ALL COURSES
- * ============================== */
+ * */
 export const getAllCourses = async (_req: Request, res: Response) => {
   try {
     const courses = await Course.find({ isDeleted: false })
@@ -74,9 +74,9 @@ export const getAllCourses = async (_req: Request, res: Response) => {
   }
 };
 
-/** ==============================
+/** 
  *  GET SINGLE COURSE
- * ============================== */
+ *  */
 export const getCourseById = async (req: Request, res: Response) => {
   try {
     const {courseId} = req.params;
@@ -101,9 +101,9 @@ export const getCourseById = async (req: Request, res: Response) => {
   }
 };
 
-/** ==============================
+/** 
  *  FACILITATOR / ADMIN — UPDATE COURSE
- * ============================== */
+ *  */
 export const updateCourse = async (req: Request, res: Response) => {
   try {
     const {courseId} = req.params;
@@ -150,9 +150,9 @@ export const updateCourse = async (req: Request, res: Response) => {
   }
 };
 
-/** ==============================
+/** 
  *  FACILITATOR / ADMIN — DELETE COURSE (SOFT DELETE)
- * ============================== */
+ *  */
 export const deleteCourse = async (req: Request, res: Response) => {
   try {
     const {courseId} = req.params;
@@ -192,6 +192,56 @@ export const deleteCourse = async (req: Request, res: Response) => {
     });
   }
 };
+
+/** 
+ *  ADMIN / FACILITATOR — RESTORE COURSE
+ */
+export const restoreCourse = async (req: Request, res: Response) => {
+  try {
+    const { courseId } = req.params;
+    const { userId, role } = (req as any).user;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found.",
+      });
+    }
+
+    // only admin or the facilitator who created it can restore
+    if (role !== "Admin" && course.Facilitator?.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to restore this course.",
+      });
+    }
+
+    // if already active
+    if (!course.isDeleted) {
+      return res.status(400).json({
+        success: false,
+        message: "Course is already active.",
+      });
+    }
+
+    course.isDeleted = false;
+    await course.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Course restored successfully.",
+      data: course,
+    });
+  } catch (error) {
+    console.error("Error restoring course:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 
 /** ==============================
  *  LEARNER — ENROLL IN COURSE
