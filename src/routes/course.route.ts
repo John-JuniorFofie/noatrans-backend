@@ -84,11 +84,11 @@ router.get("/:courseId/get",authenticate, authorizedRoles ("Facilitator, Learner
  * @swagger
  * /api/v1/courses:
  *   post:
- *     summary: Create a new course (Facilitator only)
+ *     summary: Create a new course (Facilitator and Admin only)
  *     tags: [Courses]
  *     security:
  *       - bearerAuth: []
- *     description: Facilitator creates a new course.
+ *     description: Facilitator or Admin create a new course.
  *     requestBody:
  *       required: true
  *       content:
@@ -128,9 +128,9 @@ router.get("/:courseId/get",authenticate, authorizedRoles ("Facilitator, Learner
  *       400:
  *         description: Missing required fields
  *       403:
- *         description: Access denied (only Facilitators can create courses)
+ *         description: Access denied (only Facilitators and Admins can create courses)
  */
-router.post("/create", authenticate, authorizedRoles("Facilitator"), createCourse);
+router.post("/create", authenticate, authorizedRoles("Facilitator, Admin"), createCourse);
 
 /**
  * @swagger
