@@ -261,7 +261,7 @@ router.patch("/:courseId/update", authenticate, authorizedRoles("Facilitator", "
  *       404:
  *         description: Course not found
  */
-router.delete("/:id/delete", authenticate, authorizedRoles("Facilitator", "Admin"), deleteCourse);
+router.delete("/:courseId/delete", authenticate, authorizedRoles("Facilitator", "Admin"), deleteCourse);
 
 
 export default router;
