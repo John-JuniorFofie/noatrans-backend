@@ -209,7 +209,7 @@ router.patch("/:courseId/update", authenticate, authorizedRoles("Facilitator", "
  * @swagger
  * /api/v1/courses/{id}:
  *   delete:
- *     summary: Delete (soft delete) a course (Facilitator/Admin)
+ *     summary: Delete  a course (Facilitator/Admin)
  *     tags: [Courses]
  *     security:
  *       - bearerAuth: []
