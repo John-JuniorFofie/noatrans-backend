@@ -78,7 +78,7 @@ router.get("/",authenticate, authorizedRoles ("Faclilitator, Learner, Admin"), g
  *       500:
  *         description: Internal server error
  */
-router.get("/:id/",authenticate, authorizedRoles ("Facilitator, Learner, Admin"), getCourseById);
+router.get("/:courseId/get",authenticate, authorizedRoles ("Facilitator, Learner, Admin"), getCourseById);
 
 /**
  * @swagger
@@ -203,7 +203,7 @@ router.post("/:courseId/enroll", authenticate, authorizedRoles("Learner"), enrol
  *       404:
  *         description: Course not found
  */
-router.patch("/:id/update", authenticate, authorizedRoles("Facilitator", "Admin"), updateCourse);
+router.patch("/:courseId/update", authenticate, authorizedRoles("Facilitator", "Admin"), updateCourse);
 
 /**
  * @swagger

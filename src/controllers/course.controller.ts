@@ -60,8 +60,8 @@ export const createCourse = async (req: Request, res: Response) => {
 export const getAllCourses = async (_req: Request, res: Response) => {
   try {
     const courses = await Course.find({ isDeleted: false })
-      .populate("facilitator", "fullName email")
-      .populate("learners", "fullName email");
+      .populate("Facilitator", "fullName email")
+      .populate("Learners", "fullName email");
 
     res.status(200).json({
       success: true,
@@ -81,8 +81,8 @@ export const getCourseById = async (req: Request, res: Response) => {
   try {
     const {courseId} = req.params;
     const course = await Course.findById(courseId)
-      .populate("facilitator", "fullName email")
-      .populate("learners", "fullName email");
+      .populate("Facilitator", "fullName email")
+      .populate("Learners", "fullName email");
 
     if (!course || course.isDeleted) {
       return res
