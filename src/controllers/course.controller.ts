@@ -50,7 +50,10 @@ export const createCourse = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error creating course:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({
+       success: false, 
+       message: "Internal server error" 
+      });
   }
 };
 
@@ -69,7 +72,11 @@ export const getAllCourses = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error fetching courses:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({ 
+      success:
+       false,
+        message: "Internal server error" 
+      });
   }
 };
 
@@ -301,7 +308,7 @@ export const enrollInCourse = async (req: Request, res: Response) => {
  * */
 export const getAllEnrolled = async (req: Request, res: Response) => {
   try {
-   const {userId,role} = (req as any).user;
+   const {role} = (req as any).user;
 
     if (role !== "Admin") {
       return res.status(403).json({
@@ -309,7 +316,7 @@ export const getAllEnrolled = async (req: Request, res: Response) => {
         message: "Only admins can view all enrolled learners.",
       });
     }
-    const courses = await Enrollment.find({ isEnrolled: true })
+     const courses = await Enrollment.find({ isEnrolled: true })
       .populate("userId", "fullName email")
 
     res.status(200).json({
@@ -319,6 +326,8 @@ export const getAllEnrolled = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error fetching courses:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({
+       success: false,
+        message: "Internal server error" });
   }
 };

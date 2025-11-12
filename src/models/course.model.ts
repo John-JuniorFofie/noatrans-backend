@@ -38,8 +38,8 @@ const courseSchema = new Schema<ICourse>(
     level: {
       type: String,
       required: true,
-      enum: ["Beginner", "Intermediate", "Advanced"],
-      default: "Beginner",
+      enum: ["Elementary", "intermediateLow","intermediateHigh", "Advanced","Superior"],
+      default: "Ementary",
     },
     Facilitator: {
       type: Schema.Types.ObjectId,
