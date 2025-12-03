@@ -1,7 +1,7 @@
 import type{Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import User from '../models/user.model';
+import UserModel from '../models/user.model';
 // import type{CustomJwtPayload} from '../types/authRequest.ts';
 import dotenv from "dotenv";
 
@@ -9,7 +9,7 @@ dotenv.config();
 
 
 //JWT
-const { ACCESS_TOKEN_SECRET } = process.env;
+const { ACCESS_TOKEN_SECRET } = process.env || 'default_secret';
 
 if (!ACCESS_TOKEN_SECRET) {
     throw new Error('ACCESS_TOKEN_SECRET is not defined in .env');
@@ -55,7 +55,7 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing username
-        const existingUsername = await User.findOne({ userName });
+        const existingUsername = await UserModel.findOne({ userName });
         if (existingUsername) {
             res.status(400).json({
                 success: false,
@@ -65,7 +65,7 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing user
-        const existingUser = await User.findOne({ email });
+        const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             res.status(400).json({
                 success: false,
@@ -77,7 +77,7 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         //check for existing admin
 
         if (role === "Admin"){
-        const existingAdmin = await User.findOne({role:'Admin'});
+        const existingAdmin = await UserModel.findOne({role:'Admin'});
         if(existingAdmin){
             res.status(400).json({
                 success:false,
@@ -91,7 +91,7 @@ export const register = async ( req: Request, res: Response): Promise<void> => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         //Create New User
-         await User.create({
+         await UserModel.create({
             fullName,
             userName,
             email,
@@ -130,7 +130,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         }
 
         //Check for existing user
-        const existingUser = await User.findOne({email}).select('+password');
+        const existingUser = await UserModel.findOne({email}).select('+password');
         if (!existingUser) {
             res.status(400).json({
                 success: false,
