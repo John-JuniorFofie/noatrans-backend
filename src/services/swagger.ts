@@ -21,8 +21,8 @@ const options = {
         servers: [
            
             {
-                url: "http://localhost:5000/",
-                description: "local host",
+                url: "https://noatrans-backend.onrender.com/",
+                description: "onrender.com",
             }
         ],
         components: {
