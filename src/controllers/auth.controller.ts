@@ -9,7 +9,7 @@ dotenv.config();
 
 
 //JWT
-const { ACCESS_TOKEN_SECRET } = process.env || 'default_secret';
+const { ACCESS_TOKEN_SECRET } = process.env;
 
 if (!ACCESS_TOKEN_SECRET) {
     throw new Error('ACCESS_TOKEN_SECRET is not defined in .env');
