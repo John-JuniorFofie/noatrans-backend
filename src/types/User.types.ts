@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import type{UserRole} from "./authRequest.ts";
+import type{UserRole} from "./authRequest";
 
 export interface IUser extends Document {
    fullName: string;

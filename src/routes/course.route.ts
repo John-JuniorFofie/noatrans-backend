@@ -9,10 +9,10 @@ import {
   getCourseById,
   getAllEnrolled, 
    
-} from "../controllers/course.controller.ts";
+} from "../controllers/course.controller";
 
-import { authenticate } from "../middlewares/auth.middleware.ts";
-import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
+import { authenticate } from "../middlewares/auth.middleware";
+import { authorizedRoles } from "../middlewares/rbac.middleware";
 
 const router = express.Router();
   

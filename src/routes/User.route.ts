@@ -6,9 +6,9 @@ import {
   changeUsername,
   changePassword,
   deleteAccount,
-} from "../controllers/user.controllers.ts";
-import { authenticate } from "../middlewares/auth.middleware.ts";
-import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
+} from "../controllers/user.controllers";
+import { authenticate } from "../middlewares/auth.middleware";
+import { authorizedRoles } from "../middlewares/rbac.middleware";
 
 const router = Router();
 /**

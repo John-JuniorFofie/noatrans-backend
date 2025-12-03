@@ -1,6 +1,6 @@
 import type{ Request, Response } from "express";
-import Course from "../models/course.model.ts";
-import Enrollment from "../models/enrollment.model.ts";
+import Course from "../models/course.model";
+import Enrollment from "../models/enrollment.model";
 import mongoose from "mongoose";
 
 /**

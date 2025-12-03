@@ -2,11 +2,11 @@ import express from "express";
 import type  { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./config/db.ts";
+import connectDB from "./config/db";
 import morgan from "morgan"; 
-import indexRouter from "./routes/index.route.ts";
+import indexRouter from "./routes/index.route";
 import swagger from "swagger-ui-express";
-import swaggerSpec from "./services/swagger.ts";
+import swaggerSpec from "./services/swagger";
 // import { authenticate } from "./middlewares/auth.middleware.ts";
 
 

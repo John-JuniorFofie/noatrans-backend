@@ -1,7 +1,7 @@
 import express from "express";
-import { register, login } from "../controllers/auth.controller.ts";
-import { authenticate } from "../middlewares/auth.middleware.ts";
-import { authorizedRoles } from "../middlewares/rbac.middleware.ts";
+import { register, login } from "../controllers/auth.controller";
+import { authenticate } from "../middlewares/auth.middleware";
+import { authorizedRoles } from "../middlewares/rbac.middleware";
 
 const router = express.Router();
 
