@@ -22,7 +22,11 @@ const options = {
            
             {
                 url: "https://noatrans-backend.onrender.com/",
-                description: "onrender.com",
+                description: "development server",
+            },
+             {
+                url: "https://localhost:5000/",
+                description: "live server",
             }
         ],
         components: {
