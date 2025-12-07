@@ -25,7 +25,7 @@ const options = {
                 description: "development server",
             },
              {
-                url: "https://localhost:5000/",
+                url: "http://localhost:5000/",
                 description: "live server",
             }
         ],
