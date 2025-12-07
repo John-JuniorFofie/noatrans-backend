@@ -3,6 +3,7 @@ import type{UserRole} from "../types/authRequest";
 
 export interface IUser extends Document {
     fullName: string;
+    userName: string;
     email: string;
     password: string;
     role: UserRole;

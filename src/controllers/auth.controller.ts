@@ -19,97 +19,92 @@ if (!ACCESS_TOKEN_SECRET) {
 //@route POST /api/v1/auth/register
 //@desc Sign Up User (Create User and Hash Password)
 //@access Public
-export const register = async ( req: Request, res: Response): Promise<void> => {
-    try {
-        const {
-            fullName,
-            userName,
-            email,
-            password,
-            role,
-         } = req.body;
+export const register = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { fullName, userName, email, password } = req.body;
 
-        //Validation
-        if (!fullName || !email || !password|| !role) {
-            res.status(400).json({
-                success: false,
-                message: "Full Name, Email, Password and role are required"
-            });
-            return
-        }
-
-        if(!userName) {
-            res.status(400).json({
-                success: false,
-                message: "Username is required and must be unique"
-            });
-            return
-        }
-
-        if(password.length < 8) {
-            res.status(400).json({
-                success: false,
-                message: "Password must be at least 8 characters long"
-            });
-            return
-        }
-
-        //Check for existing username
-        const existingUsername = await UserModel.findOne({ userName });
-        if (existingUsername) {
-            res.status(400).json({
-                success: false,
-                message: "User already exists, try logging in."
-            });
-            return
-        }
-
-        //Check for existing user
-        const existingUser = await UserModel.findOne({ email });
-        if (existingUser) {
-            res.status(400).json({
-                success: false,
-                message: 'User already exists, try logging in.',
-            });
-            return;
-        }
-
-        //check for existing admin
-
-        if (role === "Admin"){
-        const existingAdmin = await UserModel.findOne({role:'Admin'});
-        if(existingAdmin){
-            res.status(400).json({
-                success:false,
-                message:"An admin account already exists"
-            });return;
-        }
-
-
-        //Hash Password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        //Create New User
-         await UserModel.create({
-            fullName,
-            userName,
-            email,
-            password: hashedPassword,
-            role,
-            
-        });
-
-        res.status(201).json({
-            success: true,
-            message: "User registered successfully",
-        });
-
-    }} catch (error: unknown) {
-        console.log({message: "Error signing up user", error: error});
-        res.status(500).json({ success: false, error: "Internal Server Error" });
-        return
+    // VALIDATION
+    if (!fullName || !email || !password) {
+      res.status(400).json({
+        success: false,
+        message: "Full Name, Email and Password are required",
+      });
+      return;
     }
+
+    if (!userName) {
+      res.status(400).json({
+        success: false,
+        message: "Username is required and must be unique",
+      });
+      return;
+    }
+
+    if (password.length < 8) {
+      res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long",
+      });
+      return;
+    }
+
+    // CHECK EXISTING USERNAME
+    const existingUsername = await UserModel.findOne({ userName });
+    if (existingUsername) {
+      res.status(400).json({
+        success: false,
+        message: "Username already exists, choose another one.",
+      });
+      return;
+    }
+
+    // CHECK EXISTING EMAIL
+    const existingUser = await UserModel.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({
+        success: false,
+        message: "Email already exists, try logging in.",
+      });
+      return;
+    }
+
+    // AUTOMATIC ROLE ASSIGNMENT
+    let role = "Learner"; // default
+
+    if (email.toLowerCase().endsWith("@noatrans.com")) {
+      role = "Admin"; // admin uses business email only
+    }
+
+    // HASH PASSWORD
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // CREATE USER
+    const newUser = await UserModel.create({
+      fullName,
+      userName,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Account created successfully",
+      user: {
+        id: newUser._id,
+        fullName: newUser.fullName,
+        userName: newUser.userName,
+        email: newUser.email,
+        // role: newUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
 
