@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login } from "../controllers/auth.controller";
+import { register, login, forgotPassword, verifyOTP, resetPassword } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { authorizedRoles } from "../middlewares/rbac.middleware";
 
@@ -183,7 +183,101 @@ router.post("/login", login);
  *               success: false
  *               message: "Access denied."
  */
-router.get("/profile",authenticate,authorizedRoles("Facilitator", "Learner", "Admin"),
+// ===============================
+// FORGOT PASSWORD
+// ===============================
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @swagger
+ * /api/v1/auth/forgot-password:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Request password reset
+ *     description: Sends an OTP to the user's email if the email exists.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "john@example.com"
+ *     responses:
+ *       200:
+ *         description: OTP sent if user exists.
+ */
+
+
+// ===============================
+// VERIFY OTP
+// ===============================
+router.post("/otp/verify", verifyOTP);
+
+/**
+ * @swagger
+ * /api/v1/auth/otp/verify:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Verify OTP
+ *     description: Validates OTP and generates a temporary reset token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - otp
+ *             properties:
+ *               otp:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: OTP verified. Temporary token issued.
+ */
+
+
+// ===============================
+// RESET PASSWORD
+// ===============================
+router.put("/otp/reset", resetPassword);
+
+/**
+ * @swagger
+ * /api/v1/auth/otp/reset:
+ *   put:
+ *     tags:
+ *       - Authentication
+ *     summary: Reset password after OTP verification
+ *     description: User submits new password along with the temp token.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: "NewSecurePass123!"
+ *     responses:
+ *       200:
+ *         description: Password reset successful.
+ */
+
+router.get("/profile", authenticate, authorizedRoles("Facilitator", "Learner", "Admin"),
   (req, res) => {
     res.json({ message: "Welcome to your dashboard!" });
   }
