@@ -7,7 +7,9 @@ import dotenv from "dotenv";
 import generateOTP from '../utils/OTP';
 import OTPVerification from '../models/OTPVerification.model';
 import {CustomJwtPayload} from '../types/authRequest';
-import {sendEmail} from '../utils/email.transporter';
+import {Email} from '../utils/email.transporter';
+import { sendEmail } from "../utils/email.resend";
+
 
 dotenv.config();
 
@@ -227,7 +229,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
  Best Regards,  
  AAOBA Support Team`;
 
-        await sendEmail({
+        await Email({
             email: user.email,
             subject: "Password Reset OTP",
             text: emailText,

@@ -11,7 +11,7 @@ interface EmailOptions {
 }
 
 //Send email function with email transporter
-export const sendEmail = async ({ email, subject, text}:EmailOptions): Promise<nodemailer.SentMessageInfo> => {
+export const Email = async ({ email, subject, text}:EmailOptions): Promise<nodemailer.SentMessageInfo> => {
     try {
             const transporter = nodemailer.createTransport({
                 host: process.env.EMAIL_HOST,
