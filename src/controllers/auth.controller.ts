@@ -27,24 +27,24 @@ if (!ACCESS_TOKEN_SECRET) {
 //@access Public
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { fullName, userName, email, password } = req.body;
+    const { firstName, surName, userName, email, password } = req.body;
 
     // VALIDATION
-    if (!fullName || !email || !password) {
+    if (!firstName || !surName || !email || !password) {
       res.status(400).json({
         success: false,
-        message: "Full Name, Email and Password are required",
+        message: "First name, Surname, Email and Password are required",
       });
       return;
     }
 
-    if (!userName) {
-      res.status(400).json({
-        success: false,
-        message: "Username is required and must be unique",
-      });
-      return;
-    }
+    // if (!userName) {
+    //   res.status(400).json({
+    //     success: false,
+    //     message: "Username is required and must be unique",
+    //   });
+    //   return;
+    // }
 
     if (password.length < 8) {
       res.status(400).json({

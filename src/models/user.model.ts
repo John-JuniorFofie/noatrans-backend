@@ -2,8 +2,8 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import type{UserRole} from "../types/authRequest";
 
 export interface IUser extends Document {
-    fullName: string;
-    userName: string;
+    firstName: string;
+    surName: string;
     email: string;
     password: string;
     role: UserRole;
@@ -15,7 +15,12 @@ export interface IUser extends Document {
     }
 
 const UserSchema =new Schema<IUser>({
-    fullName:{
+    firstName:{
+        type: String,
+        required: true,
+        trim: true,
+    },
+    surName:{
         type: String,
         required: true,
         trim: true,
