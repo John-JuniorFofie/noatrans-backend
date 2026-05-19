@@ -133,7 +133,7 @@ export const changeUsername = async (req:AuthRequest, res:Response): Promise<voi
       return;
     }
     //update email
-      user.fullName = newUsername;
+      user.firstName = newUsername;
       (user as any).userNameChangedAt = new Date(); 
       await user.save();
 
