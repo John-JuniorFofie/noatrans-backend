@@ -86,7 +86,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // CREATE USER
     const newUser = await UserModel.create({
-      fullName,
+      firstName,
+      surName,
       userName,
       email,
       password: hashedPassword,
@@ -98,8 +99,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       message: "Account created successfully",
       user: {
         id: newUser._id,
-        fullName: newUser.fullName,
-        userName: newUser.userName,
+        fullName: `${newUser.firstName} ${newUser.surName}`,
+        // userName: newUser.userName,
         email: newUser.email,
         // role: newUser.role,
       },
@@ -216,7 +217,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
         //Email HTML content
         const emailText =
-` Hello ${user.fullName},
+` Hello ${user.firstName},
  You have requested to reset your password.
  Use the OTP below to proceed:
  OTP: ${otp}
@@ -363,7 +364,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
         //Send confirmation email
         const emailText =
- ` Hello ${user.fullName},
+ ` Hello ${user.firstName},
 Your password has been successfully changed.
 If you did not perform this action, please contact our support team immediately.
     
